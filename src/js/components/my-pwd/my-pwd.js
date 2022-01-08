@@ -40,9 +40,15 @@ template.innerHTML = `
         background-color: #0a437d;
     }
 
-    #dock img {
-        width: 50px;
-        height: 50px;
+    #dock div {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        gap: 10px;
+    }
+
+    img {
+        height: 70%;
     }
 
     .hidden {
@@ -51,15 +57,15 @@ template.innerHTML = `
 </style>
 
 <div id="container">
-    <div id="memory-game">
-        <my-memory-game></my-memory-game>
-    </div>
-    <my-chat class="hidden"></my-chat>
+    <my-memory-game class="hidden"></my-memory-game>
+    <my-chat></my-chat>
 </div>
 <div id="dock">
-    <img src="${URLS[1]}" alt="memory logo">
-    <img src="${URLS[2]}" alt="chat logo">
-    <img src="${URLS[3]}" alt="custum logo">
+    <div>
+        <img src="${URLS[1]}" alt="memory logo">
+        <img src="${URLS[2]}" alt="chat logo">
+        <img src="${URLS[3]}" alt="custum logo">
+    </div>
 </div>
 `
 

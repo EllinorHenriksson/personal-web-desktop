@@ -108,13 +108,13 @@ template.innerHTML = `
     <form>
     <fieldset>
         <legend>Nickname</legend>
-        <input type=text placeholder="Nickname" required>
+        <input type="text" placeholder="Nickname" required>
       </fieldset>
       <fieldset>
         <legend>No of Tiles</legend>
-        <label><input type=radio name=tiles value=small> 4</label>
-        <label><input type=radio name=tiles value=medium> 8</label>
-        <label><input type=radio name=tiles value=large checked> 16</label>
+        <label><input type="radio" name="tiles" value="small"> 4</label>
+        <label><input type="radio" name="tiles" value="medium"> 8</label>
+        <label><input type="radio" name="tiles" value="large" checked> 16</label>
       </fieldset>
       <input type="submit" value="Let's play">
     </form>
