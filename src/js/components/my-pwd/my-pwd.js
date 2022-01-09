@@ -20,7 +20,7 @@ for (let i = 0; i <= 8; i++) {
 const template = document.createElement('template')
 template.innerHTML = `
 <style>
-    #container {
+    #desktop {
         background: url("${URLS[0]}") center no-repeat;
         background-size: cover;
         width: 100vw;
@@ -29,27 +29,51 @@ template.innerHTML = `
         padding: 0;
     }
 
-    #memory-game {
-        display: block;
-        width: 500px;
-        height: 500px;
-    }
-
     #dock {
         width: 100vw;
         height: 50px;
         background-color: #0a437d;
-    }
-
-    #dock div {
         display: flex;
         align-items: center;
-        height: 100%;
         gap: 10px;
     }
 
-    img {
-        height: 70%;
+    /* Fortsätt här */
+    my-window {
+        display: block;
+        margin: 0;
+        padding: 0;
+        width: max-content;
+        height: max-content;
+        max-width: 100vw;
+        max-height: calc(100vh - 50px);
+        background-color: red;
+    }
+
+    button#one {
+        background: url("${URLS[1]}") center no-repeat;
+    }
+
+    button#two {
+        background: url("${URLS[2]}") center no-repeat;
+    }
+
+    button#three {
+        background: url("${URLS[3]}") center no-repeat;
+    } 
+
+    button#one, button#two, button#three {
+        width: 40px;
+        height: 40px;
+        background-size: contain;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    #dock button:focus {
+        outline: none;
+        border: 2px solid white;
     }
 
     .hidden {
@@ -57,20 +81,29 @@ template.innerHTML = `
     }
 </style>
 
-<div id="container">
-    <my-memory-game class="hidden"></my-memory-game>
-    <my-chat class="hidden"></my-chat>
+<div id="desktop">
+</div>
+
+<div class="memory-template hidden">
+    <my-window data-height="500px" data-width="500px" data-name="Memory game">
+        <img slot="logo" src="${URLS[1]}" alt="app logo">
+        <my-memory-game slot="app"></my-memory-game>
+    </my-window>
+</div>
+
+<div class="chat-template hidden">
     <my-window data-height="400px" data-width="400px" data-name="Chat">
         <img slot="logo" src="${URLS[2]}" alt="app logo">
         <my-chat slot="app"></my-chat>
     </my-window>
 </div>
+
+<!-- Skapa mall för custum app -->
+
 <div id="dock">
-    <div>
-        <img src="${URLS[1]}" alt="memory logo">
-        <img src="${URLS[2]}" alt="chat logo">
-        <img src="${URLS[3]}" alt="custum logo">
-    </div>
+    <button id="one">
+    <button id="two">
+    <button id="three">
 </div>
 `
 
@@ -87,6 +120,30 @@ customElements.define('my-pwd',
 
       // Attach a shadow DOM tree to this element and append the template to the shadow root.
       this.attachShadow({ mode: 'open' }).appendChild(template.content.cloneNode(true))
+
+      // Add event listeners.
+      this.shadowRoot.querySelectorAll('button').forEach(x => x.addEventListener('click', event => {
+        event.stopPropagation()
+        this.#handleClick(event)
+      }))
+
+      this.shadowRoot.querySelector('#desktop').addEventListener('closeWindow', event => this.#handleCloseWindow(event))
+    }
+
+    #handleClick (event) {
+      if (event.target === this.shadowRoot.querySelector('#one')) {
+        console.log('One')
+        const myWindow = this.shadowRoot.querySelector('.memory-template my-window').cloneNode(true)
+        this.shadowRoot.querySelector('#desktop').appendChild(myWindow)
+      } else if (event.target === this.shadowRoot.querySelector('#two')) {
+        console.log('Two')
+      } else if (event.target === this.shadowRoot.querySelector('#three')) {
+        console.log('Three')
+      }
+    }
+
+    #handleCloseWindow (event) {
+      this.shadowRoot.querySelector('#desktop').removeChild(event.target)
     }
   }
 )

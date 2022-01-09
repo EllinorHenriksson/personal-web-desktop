@@ -16,11 +16,23 @@ for (let i = 0; i <= 8; i++) {
 const template = document.createElement('template')
 template.innerHTML = `
 <style>
+    /*
     #container {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
         /* Attribut */
-        width: 400px;
+        width: calc(400px + 4px);
         /* Attribut */
-        height: calc(400px + 30px);
+        height: calc(400px + 34px);
+        border: 2px solid grey;
+    }
+    */
+
+    #container {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
         border: 2px solid grey;
     }
 
@@ -63,6 +75,18 @@ template.innerHTML = `
         width: max-content;
         font-family: sans-serif;
     }
+
+    #window {
+        margin: 0;
+        padding: 0;
+        /* Attribut */
+        width: 400px;
+        /* Attribut */
+        height: 400px;
+        max-width: calc(100% - 4px);
+        max-height: calc(100% - 34px);
+        overflow: auto;
+    }
 </style>
 
 <div id="container">
@@ -74,7 +98,9 @@ template.innerHTML = `
         <button>
     </div>
     <!-- Slotta in appen här -->
-    <slot name="app"></slot>
+    <div id="window">
+        <slot name="app"></slot>
+    </div>
 </div>
 `
 
@@ -94,6 +120,10 @@ customElements.define('my-window',
 
       // Add event listener for 'click', dispatch custum event that bubbles
       // FORTSÄTT HÄR!!!
+      this.shadowRoot.querySelector('button').addEventListener('click', event => {
+        event.stopPropagation()
+        this.dispatchEvent(new window.CustomEvent('closeWindow', { bubbles: true }))
+      })
     }
 
     /**
@@ -114,11 +144,13 @@ customElements.define('my-window',
      */
     attributeChangedCallback (name, oldValue, newValue) {
       if (name === 'data-width' && newValue !== oldValue) {
-        this.shadowRoot.querySelector('#container').style.width = `${newValue}`
+        //this.shadowRoot.querySelector('#container').style.width = `calc(${newValue} + 4px)`
+        this.shadowRoot.querySelector('#window').style.width = newValue
       }
 
       if (name === 'data-height' && newValue !== oldValue) {
-        this.shadowRoot.querySelector('#container').style.height = `calc(${newValue} + 30px)`
+        //this.shadowRoot.querySelector('#container').style.height = `calc(${newValue} + 34px)`
+        this.shadowRoot.querySelector('#window').style.height = newValue
       }
 
       if (name === 'data-name' && newValue !== oldValue) {
