@@ -20,6 +20,12 @@ for (let i = 0; i <= 8; i++) {
 const template = document.createElement('template')
 template.innerHTML = `
 <style>
+    #container {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+    }
+
     #desktop {
         background: url("${URLS[0]}") center no-repeat;
         background-size: cover;
@@ -36,18 +42,6 @@ template.innerHTML = `
         display: flex;
         align-items: center;
         gap: 10px;
-    }
-
-    /* Fortsätt här */
-    my-window {
-        display: block;
-        margin: 0;
-        padding: 0;
-        width: max-content;
-        height: max-content;
-        max-width: 100vw;
-        max-height: calc(100vh - 50px);
-        background-color: red;
     }
 
     button#one {
@@ -81,29 +75,33 @@ template.innerHTML = `
     }
 </style>
 
-<div id="desktop">
-</div>
+<div id="container">
 
-<div class="memory-template hidden">
-    <my-window data-height="500px" data-width="500px" data-name="Memory game">
-        <img slot="logo" src="${URLS[1]}" alt="app logo">
-        <my-memory-game slot="app"></my-memory-game>
-    </my-window>
-</div>
+    <div id="desktop">
+    </div>
 
-<div class="chat-template hidden">
-    <my-window data-height="400px" data-width="400px" data-name="Chat">
-        <img slot="logo" src="${URLS[2]}" alt="app logo">
-        <my-chat slot="app"></my-chat>
-    </my-window>
-</div>
+    <div class="memory-template hidden">
+        <my-window data-height="400px" data-width="400px" data-name="Memory game">
+            <img slot="logo" src="${URLS[1]}" alt="app logo">
+            <my-memory-game slot="app"></my-memory-game>
+        </my-window>
+    </div>
 
-<!-- Skapa mall för custum app -->
+    <div class="chat-template hidden">
+        <my-window data-height="400px" data-width="400px" data-name="Chat">
+            <img slot="logo" src="${URLS[2]}" alt="app logo">
+            <my-chat slot="app"></my-chat>
+        </my-window>
+    </div>
 
-<div id="dock">
-    <button id="one">
-    <button id="two">
-    <button id="three">
+    <!-- SKAPA MALL FÖR CUSTOM APP -->
+
+    <div id="dock">
+        <button id="one">
+        <button id="two">
+        <button id="three">
+    </div>
+
 </div>
 `
 
@@ -132,12 +130,13 @@ customElements.define('my-pwd',
 
     #handleClick (event) {
       if (event.target === this.shadowRoot.querySelector('#one')) {
-        console.log('One')
         const myWindow = this.shadowRoot.querySelector('.memory-template my-window').cloneNode(true)
         this.shadowRoot.querySelector('#desktop').appendChild(myWindow)
       } else if (event.target === this.shadowRoot.querySelector('#two')) {
-        console.log('Two')
+        const myWindow = this.shadowRoot.querySelector('.chat-template my-window').cloneNode(true)
+        this.shadowRoot.querySelector('#desktop').appendChild(myWindow)
       } else if (event.target === this.shadowRoot.querySelector('#three')) {
+        // KVAR ATT GÖRA
         console.log('Three')
       }
     }

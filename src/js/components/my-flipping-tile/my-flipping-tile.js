@@ -13,8 +13,8 @@ const template = document.createElement('template')
 template.innerHTML = `
 <style>
     #tile {
-      width: 100px;
-      height: 100px;
+      width: 80px;
+      height: 80px;
       border-radius: 20px;
       background-color: white;
       border: solid grey 2px;

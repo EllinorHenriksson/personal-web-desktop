@@ -21,8 +21,8 @@ template.innerHTML = `
 <style>
   #container {
     box-sizing: border-box;
-    width: 500px;
-    height: 500px;
+    width: 400px;
+    height: 400px;
     background-color: #ddd4d4;
     padding: 20px;
     margin: 0;
@@ -67,6 +67,7 @@ template.innerHTML = `
 
   .board {
       width: max-content;
+      padding: 1rem;
       display: grid;
       gap: 1rem;
       grid-template-columns: repeat(4, max-content);
