@@ -5,6 +5,7 @@
  * @version 1.0.0
  */
 
+import '../my-window'
 import '../my-memory-game'
 import '../my-chat'
 
@@ -58,7 +59,11 @@ template.innerHTML = `
 
 <div id="container">
     <my-memory-game class="hidden"></my-memory-game>
-    <my-chat></my-chat>
+    <my-chat class="hidden"></my-chat>
+    <my-window data-height="400px" data-width="400px" data-name="Chat">
+        <img slot="logo" src="${URLS[2]}" alt="app logo">
+        <my-chat slot="app"></my-chat>
+    </my-window>
 </div>
 <div id="dock">
     <div>

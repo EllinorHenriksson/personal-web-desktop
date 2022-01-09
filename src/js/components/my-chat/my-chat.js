@@ -21,43 +21,13 @@ template.innerHTML = `
     background-color: #edcc80;
     width: 400px;
     height: 400px;
-    border: 2px solid grey;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     font-size: 16px;
   }
 
-  #top-bar {
-    width: 100%;
-    height: 30px;
-    background-color: #ffffff;
-    display: grid;
-    grid-template-columns: 10% 80% 10%;
-    grid-template-areas: "chat-logo text cross-icon";
-    align-items: center;
-  }
-
-  #top-bar img[alt="chat logo"] {
-    height: 80%;
-    grid-area: chat-logo;
-    justify-self: center;
-  }
-
-  #top-bar img[alt="cross icon"] {
-    height: 80%;
-    grid-area: cross-icon;
-    justify-self: center;
-    cursor: pointer;
-  }
-
-  #top-bar div {
-    color: #292929;
-    width: max-content;
-    margin-left: 10px;
-  }
-
   .user-name {
     width: 100%;
-    height: calc(100% - 30px);
+    height: 100%;
     display: grid;
     grid-template-rows: 1fr 1fr;
     grid-template-areas: 
@@ -107,7 +77,7 @@ template.innerHTML = `
 
   .chat {
     width: 100%;
-    height: calc(100% - 30px);
+    height: 100%;
   }
 
   #welcome {
@@ -212,11 +182,6 @@ template.innerHTML = `
 </style>
 
 <div id="container">
-  <div id="top-bar">
-    <img src="${URLS[0]}" alt="chat logo">
-    <div>Chat</div>
-    <img src="${URLS[1]}" alt="cross icon">
-  </div>
   <div class="user-name hidden">
     <p>Welcome to the course chat! <br>Please write your username:</p>
     <form>
