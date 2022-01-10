@@ -35,6 +35,11 @@ template.innerHTML = `
         padding: 0;
     }
 
+    my-window::part(window) {
+      max-width: 100vw;
+      max-height: calc(100vh - 50px);
+    }
+
     #dock {
         width: 100vw;
         height: 50px;

@@ -14,9 +14,9 @@ Default value: large
 
 | Event Name      | Fired When                        |
 | --------------- | --------------------------------- |
-| `tileMatch`    | The tiles facing up match.        |
-| `tileMismatch` | The tiles facing up do not match. |
-| `gameFinished`      | The game is finished.                 |
+| `tileMatch`     | The tiles facing up match.        |
+| `tileMismatch`  | The tiles facing up do not match. |
+| `gameFinished`  | The game is finished.             |
 
 ## Example
 

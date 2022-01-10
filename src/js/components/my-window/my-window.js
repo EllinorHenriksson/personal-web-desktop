@@ -16,13 +16,8 @@ template.innerHTML = `
         box-sizing: border-box;
         margin: 0;
         padding: 0;
-        /* Attribut */
         width: calc(400px + 4px);
-        /* Attribut */
         height: calc(400px + 34px);
-        /* Flytta 2 nedan till pwd */
-        max-width: 100vw;
-        max-height: calc(100vh - 50px);
         border: 2px solid grey;
     }
 
@@ -66,7 +61,7 @@ template.innerHTML = `
         font-family: sans-serif;
     }
 
-    #window {
+    #app-area {
         width: 100%;
         height: calc(100% - 30px);
         background-color: grey;
@@ -82,16 +77,13 @@ template.innerHTML = `
     }
 </style>
 
-<div id="container">
+<div id="container" part="window">
     <div id="top-bar">
-        <!-- Slotta in loggan här -->
         <slot name="logo"></slot>
-        <!-- Attribut -->
         <div id="app-name"></div>
         <button>
     </div>
-    <!-- Slotta in appen här -->
-    <div id="window">
+    <div id="app-area">
     <slot name="app"></slot>
     </div>
 </div>
@@ -111,8 +103,7 @@ customElements.define('my-window',
       // Attach a shadow DOM tree to this element and append the template to the shadow root.
       this.attachShadow({ mode: 'open' }).appendChild(template.content.cloneNode(true))
 
-      // Add event listener for 'click', dispatch custum event that bubbles
-      // FORTSÄTT HÄR!!!
+      // Add event listeners.
       this.shadowRoot.querySelector('button').addEventListener('click', event => {
         event.stopPropagation()
         this.dispatchEvent(new window.CustomEvent('closeWindow', { bubbles: true }))
