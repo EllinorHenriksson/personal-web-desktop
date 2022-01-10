@@ -25,7 +25,7 @@ template.innerHTML = `
     font-size: 16px;
   }
 
-  .user-name {
+  .username {
     width: 100%;
     height: 100%;
     display: grid;
@@ -36,7 +36,7 @@ template.innerHTML = `
     justify-items: center;
   }
 
-  .user-name p {
+  .username p {
     grid-area: text;
     text-align: center;
     align-self: end;
@@ -46,7 +46,7 @@ template.innerHTML = `
     grid-area: form;
   }
 
-  .user-name input[type="text"] {
+  .username input[type="text"] {
     display: block;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     padding: 5px;
@@ -55,24 +55,13 @@ template.innerHTML = `
     background-color: white;
   }
 
-  .user-name input[type="submit"] {
+  .username input[type="submit"] {
     display: block;
     margin-left: 50%;
     transform: translateX(-50%);
     margin-top: 10px;
     width: 40px;
     height: 30px;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    border-radius: 5px;
-    border: 1px solid grey;
-    background-color: #eba505;
-    color: #292929;
-    cursor: pointer;
-  }
-
-  .user-name input[type="text"]:focus, .user-name input[type="submit"]:focus, #chat-box textarea:focus, #chat-box button[type="submit"]:focus,  #chat-box button[type="button"]:focus {
-    outline: none;
-    border: 2px solid #0a437d;
   }
 
   .chat {
@@ -142,10 +131,6 @@ template.innerHTML = `
     grid-area: text-area;
     width: 95%;
     height: 80%;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    border-radius: 5px;
-    border: 1px solid grey;
-    padding: 5px;
   }
 
   #chat-box button[type="button"] {
@@ -163,16 +148,22 @@ template.innerHTML = `
 
   #chat-box button[type="submit"] {
     grid-area: submit-button;
+    align-self: start;
+    margin-top: 5px;
+  }
+
+  .username input[type="text"], .username input[type="submit"], #chat-box textarea, #chat-box button[type="submit"] {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     font-size: 1rem;
     border-radius: 5px;
     border: 1px solid grey;
+    padding: 5px;
+  }
+
+  .username input[type="submit"], #chat-box button[type="submit"] {
     background-color: #eba505;
     color: #292929;
-    padding: 5px;
     cursor: pointer;
-    align-self: start;
-    margin-top: 5px;
   }
 
   .hidden {
@@ -182,14 +173,14 @@ template.innerHTML = `
 </style>
 
 <div id="container">
-  <div class="user-name hidden">
+  <div class="username">
     <p>Welcome to the course chat! <br>Please write your username:</p>
     <form>
-      <input type="text" placeholder="Username">
+      <input type="text" placeholder="Username" required>
       <input type="submit" value="OK">
     </form>
   </div>
-  <div class="chat">
+  <div class="chat hidden">
     <div id="welcome">
       <p>Welcome <span>Ellinor</span>!<p>
     </div>
@@ -237,6 +228,25 @@ customElements.define('my-chat',
 
       // Attach a shadow DOM tree to this element and append the template to the shadow root.
       this.attachShadow({ mode: 'open' }).appendChild(template.content.cloneNode(true))
+
+      // Attach event listeners.
+      this.shadowRoot.querySelector('.username form').addEventListener('submit', event => {
+        event.stopPropagation()
+        event.preventDefault()
+
+        this.#handleSubmit(event)
+      })
+    }
+
+    connectedCallback () {
+      // Kolla om det finns ett användarnamn sparat i datorn
+    }
+
+    #handleSubmit (event) {
+      const username = this.shadowRoot.querySelector('input[type="text"]').value
+
+      this.shadowRoot.querySelector('.username').classList.toggle('hidden')
+      this.shadowRoot.querySelector('.chat').classList.toggle('hidden')
     }
   }
 )

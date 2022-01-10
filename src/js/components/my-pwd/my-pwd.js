@@ -23,7 +23,8 @@ template.innerHTML = `
     #container {
         width: 100vw;
         height: 100vh;
-        overflow: hidden;
+        /* Glöm ej att ta fram nedan */
+        /*overflow: hidden;*/
     }
 
     #desktop {
@@ -84,6 +85,20 @@ template.innerHTML = `
 
     <div id="desktop">
     </div>
+
+    <!-- TA BORT NEDAN -->
+
+    <my-window data-height="400px" data-width="400px" data-name="Memory game">
+            <img slot="logo" src="${URLS[1]}" alt="app logo">
+            <my-memory-game slot="app"></my-memory-game>
+        </my-window>
+
+        <my-window data-height="400px" data-width="400px" data-name="Chat">
+            <img slot="logo" src="${URLS[2]}" alt="app logo">
+            <my-chat slot="app"></my-chat>
+        </my-window>
+
+    <!-- SLUT: TA BORT NEDAN -->
 
     <div class="memory-template hidden">
         <my-window data-height="400px" data-width="400px" data-name="Memory game">

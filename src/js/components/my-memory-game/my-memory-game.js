@@ -42,11 +42,14 @@ template.innerHTML = `
     padding: 15px;
     background-color: #f0ecec;
     border: dotted grey 2px;
+    border-radius: 5px;
+
     width: 250px;
   }
 
   legend {
     font-weight: bold;
+    color: #292929;
   }
 
   label {
@@ -59,7 +62,7 @@ template.innerHTML = `
     margin-bottom: 0;
   }
 
-  input[type=submit] {
+  input[type="submit"] {
     display: block;
     margin-left: 50%;
     transform: translateX(-50%);
@@ -97,6 +100,20 @@ template.innerHTML = `
     display: block; 
     margin-left: 50%;
     transform: translateX(-50%);
+  }
+
+  input[type="text"], input[type="submit"], button {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid grey;
+    padding: 5px;
+  }
+
+  input[type="submit"], button {
+    background-color: #F0E431;
+    color: #292929;
+    cursor: pointer;
   }
 
   .hidden {
