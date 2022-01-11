@@ -106,6 +106,7 @@ template.innerHTML = `
     margin-top: 0;
     border-radius: 5px;
     font-size: 0.8em;
+    word-break: break-all;
   }
 
   #server p {
@@ -194,27 +195,16 @@ template.innerHTML = `
       <p>Welcome <span></span>!<p>
       <p></p>
     </div>
-    <div id="dialog" class="unvisible">
+    <div id="dialog" class="invisible">
+    <!--   
       <div id="server">
         <p>Other user</p>
         <div>Hi from server!</div>
       </div>
       <div id="user">Hi from user!</div>
-      <div id="server">
-        <p>Other user</p>
-        <div>Hi from server!</div>
-      </div>
-      <div id="server">
-        <p>Other user</p>
-        <div>Hi from server!</div>
-      </div>
-      <div id="user">Hi from user!</div>
-      <div id="server">
-        <p>Other user</p>
-        <div>Hi from server!</div>
-      </div>
+    -->
     </div>
-    <div id="chatbox" class="unvisible">
+    <div id="chatbox" class="invisible">
       <form>
         <textarea placeholder="Write a message..."></textarea>
         <button type="button">
@@ -257,7 +247,14 @@ customElements.define('my-chat',
         event.stopPropagation()
         event.preventDefault()
 
-        this.#handleSubmit(event)
+        this.#handleUsernameSubmit()
+      })
+
+      this.shadowRoot.querySelector('#chatbox form').addEventListener('submit', event => {
+        event.stopPropagation()
+        event.preventDefault()
+
+        this.#handleMessageSubmit()
       })
     }
 
@@ -277,15 +274,29 @@ customElements.define('my-chat',
 
     disconnectedCallback () {
       this.#socket.close()
-      console.log('The socket was closed')
     }
 
-    #handleSubmit (event) {
+    #handleUsernameSubmit () {
       this.#username = this.shadowRoot.querySelector('input[type="text"]').value
 
       window.localStorage.setItem('chat-username', this.#username)
 
       this.#changeDisplay()
+    }
+
+    #handleMessageSubmit () {
+      const message = this.shadowRoot.querySelector('#chatbox textarea').value
+
+      const data = {
+        type: 'message',
+        data: message,
+        username: this.#username,
+        key: 'eDBE76deU7L0H9mEBgxUKVR0VCnq0XBd'
+      }
+
+      this.#socket.send(JSON.stringify(data))
+
+      this.shadowRoot.querySelector('#chatbox textarea').value = ''
     }
 
     #changeDisplay () {
@@ -296,18 +307,38 @@ customElements.define('my-chat',
     }
 
     #handleOpen () {
-      console.log('The socket is open!')
       this.shadowRoot.querySelector('#welcome').lastElementChild.innerText = 'Connected to server.'
 
-      this.shadowRoot.querySelector('#dialog').classList.toggle('unvisible')
-      this.shadowRoot.querySelector('#chatbox').classList.toggle('unvisible')
+      this.shadowRoot.querySelector('#dialog').classList.toggle('invisible')
+      this.shadowRoot.querySelector('#chatbox').classList.toggle('invisible')
     }
 
     #handleMessage (event) {
-      console.log('A message arrived from the web socket server!')
-      console.log('Data: ', event.data)
+      const data = JSON.parse(event.data)
 
-      // FORTSÄTT HÄR
+      if (data.type === 'message') {
+        if (data.username !== this.#username) {
+          const containingDiv = document.createElement('div')
+          containingDiv.setAttribute('id', 'server')
+
+          const p = document.createElement('p')
+          p.innerText = data.username
+          containingDiv.appendChild(p)
+
+          const innerDiv = document.createElement('div')
+          innerDiv.innerText = data.data
+          containingDiv.appendChild(innerDiv)
+
+          this.shadowRoot.querySelector('#dialog').appendChild(containingDiv)
+        }
+
+        if (data.username === this.#username) {
+          const div = document.createElement('div')
+          div.setAttribute('id', 'user')
+          div.innerText = data.data
+          this.shadowRoot.querySelector('#dialog').appendChild(div)
+        }
+      }
     }
   }
 )
