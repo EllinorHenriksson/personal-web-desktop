@@ -9,10 +9,12 @@ import '../my-window'
 import '../my-memory-game'
 import '../my-chat'
 
+import { templateMemoryGame, templateChat } from './my-pwd-template.js'
+
 // Get URL to images.
 const URLS = []
 
-for (let i = 0; i <= 8; i++) {
+for (let i = 0; i <= 3; i++) {
   URLS.push(new URL(`./images/${i}.png`, import.meta.url))
 }
 
@@ -23,8 +25,7 @@ template.innerHTML = `
     #container {
         width: 100vw;
         height: 100vh;
-        /* Glöm ej att ta fram nedan */
-        /*overflow: hidden;*/
+        overflow: hidden;
     }
 
     #desktop {
@@ -82,46 +83,13 @@ template.innerHTML = `
 </style>
 
 <div id="container">
-
     <div id="desktop">
     </div>
-
-    <!-- TA BORT NEDAN -->
-
-    <my-window data-height="400px" data-width="400px" data-name="Memory game">
-            <img slot="logo" src="${URLS[1]}" alt="app logo">
-            <my-memory-game slot="app"></my-memory-game>
-        </my-window>
-
-        <my-window data-height="400px" data-width="400px" data-name="Chat">
-            <img slot="logo" src="${URLS[2]}" alt="app logo">
-            <my-chat slot="app"></my-chat>
-        </my-window>
-
-    <!-- SLUT: TA BORT NEDAN -->
-
-    <div class="memory-template hidden">
-        <my-window data-height="400px" data-width="400px" data-name="Memory game">
-            <img slot="logo" src="${URLS[1]}" alt="app logo">
-            <my-memory-game slot="app"></my-memory-game>
-        </my-window>
-    </div>
-
-    <div class="chat-template hidden">
-        <my-window data-height="400px" data-width="400px" data-name="Chat">
-            <img slot="logo" src="${URLS[2]}" alt="app logo">
-            <my-chat slot="app"></my-chat>
-        </my-window>
-    </div>
-
-    <!-- SKAPA MALL FÖR CUSTOM APP -->
-
     <div id="dock">
         <button id="one">
         <button id="two">
         <button id="three">
     </div>
-
 </div>
 `
 
@@ -150,11 +118,9 @@ customElements.define('my-pwd',
 
     #handleClick (event) {
       if (event.target === this.shadowRoot.querySelector('#one')) {
-        const myWindow = this.shadowRoot.querySelector('.memory-template my-window').cloneNode(true)
-        this.shadowRoot.querySelector('#desktop').appendChild(myWindow)
+        this.shadowRoot.querySelector('#desktop').appendChild(templateMemoryGame.content.cloneNode(true))
       } else if (event.target === this.shadowRoot.querySelector('#two')) {
-        const myWindow = this.shadowRoot.querySelector('.chat-template my-window').cloneNode(true)
-        this.shadowRoot.querySelector('#desktop').appendChild(myWindow)
+        this.shadowRoot.querySelector('#desktop').appendChild(templateChat.content.cloneNode(true))
       } else if (event.target === this.shadowRoot.querySelector('#three')) {
         // KVAR ATT GÖRA
         console.log('Three')

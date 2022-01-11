@@ -42,7 +42,7 @@ template.innerHTML = `
     align-self: end;
   }
 
-  .user-name form {
+  .username form {
     grid-area: form;
   }
 
@@ -71,8 +71,9 @@ template.innerHTML = `
 
   #welcome {
     width: 100%;
-    height: 15%;
+    height: 20%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
   }
@@ -81,9 +82,13 @@ template.innerHTML = `
     margin: 0;
   }
 
+  #welcome p:last-child {
+    font-size: 0.8em;
+  }
+
   #dialog {
     width: 100%;
-    height: 60%;
+    height: 55%;
     display: grid;
     overflow: auto;
   }
@@ -108,13 +113,13 @@ template.innerHTML = `
     font-size: 0.7em;
   }
 
-  #chat-box {
+  #chatbox {
     width: 100%;
     height: 25%;
     background-color: white;
   }
 
-  #chat-box form {
+  #chatbox form {
     width: 100%;
     height: 100%;
     display: grid;
@@ -127,13 +132,13 @@ template.innerHTML = `
     align-items: center;
   }
 
-  #chat-box textarea {
+  #chatbox textarea {
     grid-area: text-area;
     width: 95%;
     height: 80%;
   }
 
-  #chat-box button[type="button"] {
+  #chatbox button[type="button"] {
     grid-area: smiley-button;
     width: 40px;
     height: 40px;
@@ -146,13 +151,13 @@ template.innerHTML = `
     align-self: end;
   }
 
-  #chat-box button[type="submit"] {
+  #chatbox button[type="submit"] {
     grid-area: submit-button;
     align-self: start;
     margin-top: 5px;
   }
 
-  .username input[type="text"], .username input[type="submit"], #chat-box textarea, #chat-box button[type="submit"] {
+  .username input[type="text"], .username input[type="submit"], #chatbox textarea, #chatbox button[type="submit"] {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     font-size: 1rem;
     border-radius: 5px;
@@ -160,7 +165,7 @@ template.innerHTML = `
     padding: 5px;
   }
 
-  .username input[type="submit"], #chat-box button[type="submit"] {
+  .username input[type="submit"], #chatbox button[type="submit"] {
     background-color: #eba505;
     color: #292929;
     cursor: pointer;
@@ -168,6 +173,10 @@ template.innerHTML = `
 
   .hidden {
     display: none;
+  }
+
+  .unvisible {
+    visibility: hidden;
   }
 
 </style>
@@ -182,9 +191,10 @@ template.innerHTML = `
   </div>
   <div class="chat hidden">
     <div id="welcome">
-      <p>Welcome <span>Ellinor</span>!<p>
+      <p>Welcome <span></span>!<p>
+      <p></p>
     </div>
-    <div id="dialog">
+    <div id="dialog" class="unvisible">
       <div id="server">
         <p>Other user</p>
         <div>Hi from server!</div>
@@ -204,7 +214,7 @@ template.innerHTML = `
         <div>Hi from server!</div>
       </div>
     </div>
-    <div id="chat-box">
+    <div id="chatbox" class="unvisible">
       <form>
         <textarea placeholder="Write a message..."></textarea>
         <button type="button">
@@ -220,6 +230,19 @@ customElements.define('my-chat',
  * Represents a my-chat element.
  */
   class extends HTMLElement {
+    /**
+     * The username.
+     *
+     * @type {string}
+     */
+    #username
+
+    /**
+     * The web socket connection.
+     *
+     * @type {WebSocket}
+     */
+    #socket
     /**
      * Creates an instance of the current type.
      */
@@ -239,14 +262,52 @@ customElements.define('my-chat',
     }
 
     connectedCallback () {
-      // Kolla om det finns ett användarnamn sparat i datorn
+      if (window.localStorage.getItem('chat-username')) {
+        this.#username = window.localStorage.getItem('chat-username')
+        this.#changeDisplay()
+      }
+
+      this.shadowRoot.querySelector('#welcome').lastElementChild.innerText = 'Connecting to server...'
+
+      this.#socket = new window.WebSocket('wss://courselab.lnu.se/message-app/socket')
+
+      this.#socket.addEventListener('open', () => this.#handleOpen())
+      this.#socket.addEventListener('message', (event) => this.#handleMessage(event))
+    }
+
+    disconnectedCallback () {
+      this.#socket.close()
+      console.log('The socket was closed')
     }
 
     #handleSubmit (event) {
-      const username = this.shadowRoot.querySelector('input[type="text"]').value
+      this.#username = this.shadowRoot.querySelector('input[type="text"]').value
 
+      window.localStorage.setItem('chat-username', this.#username)
+
+      this.#changeDisplay()
+    }
+
+    #changeDisplay () {
       this.shadowRoot.querySelector('.username').classList.toggle('hidden')
       this.shadowRoot.querySelector('.chat').classList.toggle('hidden')
+
+      this.shadowRoot.querySelector('#welcome span').innerText = this.#username
+    }
+
+    #handleOpen () {
+      console.log('The socket is open!')
+      this.shadowRoot.querySelector('#welcome').lastElementChild.innerText = 'Connected to server.'
+
+      this.shadowRoot.querySelector('#dialog').classList.toggle('unvisible')
+      this.shadowRoot.querySelector('#chatbox').classList.toggle('unvisible')
+    }
+
+    #handleMessage (event) {
+      console.log('A message arrived from the web socket server!')
+      console.log('Data: ', event.data)
+
+      // FORTSÄTT HÄR
     }
   }
 )
