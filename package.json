@@ -21,5 +21,8 @@
   "devDependencies": {
     "@lnu/eslint-config": "^1.1.4",
     "vite": "^2.6.7"
+  },
+  "dependencies": {
+    "@joeattardi/emoji-button": "^4.6.2"
   }
 }

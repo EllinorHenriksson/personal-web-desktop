@@ -5,18 +5,16 @@
  * @version 1.0.0
  */
 
-// Get URL to images.
-const URLS = []
+// Import node module (an npm package) for creating an emoji picker.
+import { EmojiButton } from '@joeattardi/emoji-button'
 
-for (let i = 0; i <= 8; i++) {
-  URLS.push(new URL(`./images/${i}.png`, import.meta.url))
-}
+// Get URL to image.
+const IMAGE = new URL(`./images/smiley.png`, import.meta.url)
 
 // Define template.
 const template = document.createElement('template')
 template.innerHTML = `
 <style>
-
   #container {
     background-color: #edcc80;
     width: 400px;
@@ -144,7 +142,7 @@ template.innerHTML = `
     width: 40px;
     height: 40px;
     cursor: pointer;
-    background: url("${URLS[3]}") center no-repeat;
+    background: url("${IMAGE}") center no-repeat;
     background-size: contain;
     background-color: none;
     border: none;
@@ -179,7 +177,6 @@ template.innerHTML = `
   .unvisible {
     visibility: hidden;
   }
-
 </style>
 
 <div id="container">
@@ -196,18 +193,11 @@ template.innerHTML = `
       <p></p>
     </div>
     <div id="dialog" class="invisible">
-    <!--   
-      <div id="server">
-        <p>Other user</p>
-        <div>Hi from server!</div>
-      </div>
-      <div id="user">Hi from user!</div>
-    -->
     </div>
     <div id="chatbox" class="invisible">
       <form>
         <textarea placeholder="Write a message..."></textarea>
-        <button type="button">
+        <button type="button" id="emoji-trigger">
         <button type="submit">Send</button>
       </form>
     </div>
@@ -233,6 +223,21 @@ customElements.define('my-chat',
      * @type {WebSocket}
      */
     #socket
+
+    /**
+     * An emoji picker.
+     *
+     * @type {EmojiButton}
+     */
+    #picker
+
+    /**
+     * The element triggering the emoji picker.
+     *
+     * @type {HTMLButtonElement}
+     */
+    #trigger
+
     /**
      * Creates an instance of the current type.
      */
@@ -242,7 +247,10 @@ customElements.define('my-chat',
       // Attach a shadow DOM tree to this element and append the template to the shadow root.
       this.attachShadow({ mode: 'open' }).appendChild(template.content.cloneNode(true))
 
-      // Attach event listeners.
+      // Create reference to element that serves as a trigger for the emoji picker.
+      this.#trigger = this.shadowRoot.querySelector('#emoji-trigger')
+
+      // Add other event listeners.
       this.shadowRoot.querySelector('.username form').addEventListener('submit', event => {
         event.stopPropagation()
         event.preventDefault()
@@ -262,6 +270,8 @@ customElements.define('my-chat',
       if (window.localStorage.getItem('chat-username')) {
         this.#username = window.localStorage.getItem('chat-username')
         this.#changeDisplay()
+      } else {
+        this.shadowRoot.querySelector('input[type="text"]').focus()
       }
 
       this.shadowRoot.querySelector('#welcome').lastElementChild.innerText = 'Connecting to server...'
@@ -270,10 +280,23 @@ customElements.define('my-chat',
 
       this.#socket.addEventListener('open', () => this.#handleOpen())
       this.#socket.addEventListener('message', (event) => this.#handleMessage(event))
+
+      // Create emoji picker.
+      this.#picker = new EmojiButton({ emojisPerRow: 6, rows: 3, position: 'top-end' })
+
+      // Add event listener on the emoji picker through the EmojiButton method on(event, callback).
+      this.#picker.on('emoji', selection => {
+        this.shadowRoot.querySelector('textarea').value += selection.emoji
+      })
+
+      this.#trigger.addEventListener('click', () => this.#picker.togglePicker(this.#trigger))
     }
 
     disconnectedCallback () {
       this.#socket.close()
+
+      // Destroy emoji picker and remove it from DOM.
+      this.#picker.destroyPicker()
     }
 
     #handleUsernameSubmit () {
@@ -304,6 +327,8 @@ customElements.define('my-chat',
       this.shadowRoot.querySelector('.chat').classList.toggle('hidden')
 
       this.shadowRoot.querySelector('#welcome span').innerText = this.#username
+
+      this.shadowRoot.querySelector('textarea').focus()
     }
 
     #handleOpen () {

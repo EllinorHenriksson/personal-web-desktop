@@ -27,6 +27,7 @@ template.innerHTML = `
         background-color: #ffffff;
         display: grid;
         grid-template-columns: 10% 80% 10%;
+        grid-template-rows: 100%;
         grid-template-areas: "app-logo text cross-icon";
         align-items: center;
     }
@@ -35,6 +36,13 @@ template.innerHTML = `
         height: 80%;
         grid-area: app-logo;
         justify-self: center;
+    }
+
+    #app-name {
+      color: #292929;
+      width: max-content;
+      font-family: sans-serif;
+      grid-area: text;
     }
 
     button {
@@ -53,12 +61,6 @@ template.innerHTML = `
     button:focus {
         outline: none;
         border: 2px solid #0a437d;
-    }
-
-    #top-bar div {
-        color: #292929;
-        width: max-content;
-        font-family: sans-serif;
     }
 
     #app-area {
