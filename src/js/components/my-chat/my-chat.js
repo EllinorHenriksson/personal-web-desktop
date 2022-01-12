@@ -5,11 +5,11 @@
  * @version 1.0.0
  */
 
-// Import node module (an npm package) for creating an emoji picker.
+// Import node module (npm package) for creating emoji picker.
 import { EmojiButton } from '@joeattardi/emoji-button'
 
 // Get URL to image.
-const IMAGE = new URL(`./images/smiley.png`, import.meta.url)
+const IMAGE = new URL('./images/smiley.png', import.meta.url)
 
 // Define template.
 const template = document.createElement('template')
@@ -197,7 +197,7 @@ template.innerHTML = `
     <div id="chatbox" class="invisible">
       <form>
         <textarea placeholder="Write a message..."></textarea>
-        <button type="button" id="emoji-trigger">
+        <button type="button">
         <button type="submit">Send</button>
       </form>
     </div>
@@ -248,9 +248,9 @@ customElements.define('my-chat',
       this.attachShadow({ mode: 'open' }).appendChild(template.content.cloneNode(true))
 
       // Create reference to element that serves as a trigger for the emoji picker.
-      this.#trigger = this.shadowRoot.querySelector('#emoji-trigger')
+      this.#trigger = this.shadowRoot.querySelector('#chatbox button[type="button"]')
 
-      // Add other event listeners.
+      // Add event listeners.
       this.shadowRoot.querySelector('.username form').addEventListener('submit', event => {
         event.stopPropagation()
         event.preventDefault()
@@ -266,6 +266,9 @@ customElements.define('my-chat',
       })
     }
 
+    /**
+     * Called after the element is inserted into the DOM.
+     */
     connectedCallback () {
       if (window.localStorage.getItem('chat-username')) {
         this.#username = window.localStorage.getItem('chat-username')
@@ -276,6 +279,7 @@ customElements.define('my-chat',
 
       this.shadowRoot.querySelector('#welcome').lastElementChild.innerText = 'Connecting to server...'
 
+      // Create web socket connection and add event listeners.
       this.#socket = new window.WebSocket('wss://courselab.lnu.se/message-app/socket')
 
       this.#socket.addEventListener('open', () => this.#handleOpen())
@@ -289,9 +293,16 @@ customElements.define('my-chat',
         this.shadowRoot.querySelector('textarea').value += selection.emoji
       })
 
-      this.#trigger.addEventListener('click', () => this.#picker.togglePicker(this.#trigger))
+      this.#trigger.addEventListener('click', event => {
+        event.stopPropagation()
+
+        this.#picker.togglePicker(this.#trigger)
+      })
     }
 
+    /**
+     * Called after the element has been removed from the DOM.
+     */
     disconnectedCallback () {
       this.#socket.close()
 
@@ -299,6 +310,9 @@ customElements.define('my-chat',
       this.#picker.destroyPicker()
     }
 
+    /**
+     * Handles username submit.
+     */
     #handleUsernameSubmit () {
       this.#username = this.shadowRoot.querySelector('input[type="text"]').value
 
@@ -307,6 +321,9 @@ customElements.define('my-chat',
       this.#changeDisplay()
     }
 
+    /**
+     * Handles message submit.
+     */
     #handleMessageSubmit () {
       const message = this.shadowRoot.querySelector('#chatbox textarea').value
 
@@ -322,6 +339,9 @@ customElements.define('my-chat',
       this.shadowRoot.querySelector('#chatbox textarea').value = ''
     }
 
+    /**
+     * Changes the display.
+     */
     #changeDisplay () {
       this.shadowRoot.querySelector('.username').classList.toggle('hidden')
       this.shadowRoot.querySelector('.chat').classList.toggle('hidden')
@@ -331,6 +351,9 @@ customElements.define('my-chat',
       this.shadowRoot.querySelector('textarea').focus()
     }
 
+    /**
+     * Handles opening of the web socket connection.
+     */
     #handleOpen () {
       this.shadowRoot.querySelector('#welcome').lastElementChild.innerText = 'Connected to server.'
 
@@ -338,6 +361,11 @@ customElements.define('my-chat',
       this.shadowRoot.querySelector('#chatbox').classList.toggle('invisible')
     }
 
+    /**
+     * Handles message event from web socket.
+     *
+     * @param {Event} event - The dispatched event.
+     */
     #handleMessage (event) {
       const data = JSON.parse(event.data)
 
