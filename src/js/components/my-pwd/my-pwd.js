@@ -8,8 +8,9 @@
 import '../my-window'
 import '../my-memory-game'
 import '../my-chat'
+import '../my-youtube-player'
 
-import { templateMemoryGame, templateChat } from './my-pwd-template.js'
+import { templateMemoryGame, templateChat, templateYoutubePlayer } from './my-pwd-template.js'
 
 // Get URL to images.
 const URLS = []
@@ -53,6 +54,7 @@ template.innerHTML = `
 
     button#one {
         background: url("${URLS[1]}") center no-repeat;
+        margin-left: 5px;
     }
 
     button#two {
@@ -122,8 +124,7 @@ customElements.define('my-pwd',
       } else if (event.target === this.shadowRoot.querySelector('#two')) {
         this.shadowRoot.querySelector('#desktop').appendChild(templateChat.content.cloneNode(true))
       } else if (event.target === this.shadowRoot.querySelector('#three')) {
-        // KVAR ATT GÖRA
-        console.log('Three')
+        this.shadowRoot.querySelector('#desktop').appendChild(templateYoutubePlayer.content.cloneNode(true))
       }
     }
 

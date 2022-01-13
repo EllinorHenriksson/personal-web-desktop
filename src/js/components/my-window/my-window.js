@@ -27,22 +27,17 @@ template.innerHTML = `
         background-color: #ffffff;
         display: grid;
         grid-template-columns: 10% 80% 10%;
-        grid-template-rows: 100%;
-        grid-template-areas: "app-logo text cross-icon";
         align-items: center;
     }
 
     ::slotted(img) {
         height: 80%;
-        grid-area: app-logo;
-        justify-self: center;
+        margin-left: 2px;
     }
 
     #app-name {
-      color: #292929;
-      width: max-content;
       font-family: sans-serif;
-      grid-area: text;
+      color: #292929;
     }
 
     button {
@@ -53,8 +48,8 @@ template.innerHTML = `
         background-color: none;
         border: none;
         border-radius: 5px;
-        grid-area: cross-icon;
-        justify-self: center;
+        justify-self: right;
+        margin-right: 2px;
         cursor: pointer;
     }
 

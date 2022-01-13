@@ -9,7 +9,7 @@ for (let i = 0; i <= 3; i++) {
 
 const templateMemoryGame = document.createElement('template')
 templateMemoryGame.innerHTML = `
-<my-window data-height="400px" data-width="400px" data-name="Memory game">
+<my-window data-height="400px" data-width="400px" data-name="Memory Game">
     <img slot="logo" src="${URLS[1]}" alt="app logo">
     <my-memory-game slot="app"></my-memory-game>
 </my-window>
@@ -23,6 +23,12 @@ templateChat.innerHTML = `
 </my-window>
 `
 
-/* SKAPA MALL FÖR CUSTOM APP */
+const templateYoutubePlayer = document.createElement('template')
+templateYoutubePlayer.innerHTML = `
+<my-window data-height="400px" data-width="600px" data-name="Youtube Player">
+    <img slot="logo" src="${URLS[3]}" alt="app logo">
+    <my-youtube-player slot="app"></my-youtube-player>
+</my-window>
+`
 
-export { templateMemoryGame, templateChat }
+export { templateMemoryGame, templateChat, templateYoutubePlayer }
