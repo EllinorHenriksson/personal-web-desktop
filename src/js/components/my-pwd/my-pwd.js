@@ -109,6 +109,8 @@ customElements.define('my-pwd',
    */
   class extends HTMLElement {
     #zIndex
+
+    #chatCount
     /**
      * Creates an instance of the current type.
      */
@@ -119,6 +121,7 @@ customElements.define('my-pwd',
       this.attachShadow({ mode: 'open' }).appendChild(template.content.cloneNode(true))
 
       this.#zIndex = 0
+      this.#chatCount = 0
 
       // Add event listeners.
       this.shadowRoot.querySelectorAll('#dock button').forEach(x => x.addEventListener('click', event => {
@@ -136,6 +139,8 @@ customElements.define('my-pwd',
     #handleClick (event) {
       this.#zIndex += 10
 
+      let isMyChat
+
       let template
       switch (event.target) {
         case this.shadowRoot.querySelector('#one'):
@@ -143,6 +148,7 @@ customElements.define('my-pwd',
           break
         case this.shadowRoot.querySelector('#two'):
           template = templateChat
+          isMyChat = true
           break
         case this.shadowRoot.querySelector('#three'):
           template = templateYoutubePlayer
@@ -152,6 +158,19 @@ customElements.define('my-pwd',
       const myWindow = template.content.cloneNode(true)
       this.shadowRoot.querySelector('#desktop').appendChild(myWindow)
       this.shadowRoot.querySelector('#desktop').lastElementChild.style.zIndex = this.#zIndex
+
+      if (isMyChat) {
+        this.#chatCount += 1
+        this.shadowRoot.querySelector('#desktop').lastElementChild.setAttribute('id', `${this.#chatCount}`)
+        document.querySelector('.emoji-picker__wrapper:last-of-type').setAttribute('id', `${this.#chatCount}`)
+
+        this.#indexEmojiPicker(this.shadowRoot.querySelector('#desktop').lastElementChild)
+      }
+    }
+
+    #indexEmojiPicker (chatElement) {
+      const id = chatElement.getAttribute('id')
+      document.getElementById(id).style.zIndex = this.#zIndex + 1
     }
 
     #handleCloseWindow (event) {
@@ -198,6 +217,10 @@ customElements.define('my-pwd',
     #handleMousedownOnWindow (event) {
       this.#zIndex += 10
       event.target.style.zIndex = this.#zIndex
+
+      if (event.target.getAttribute('data-name') === 'Chat') {
+        this.#indexEmojiPicker(event.target)
+      }
     }
   }
 )
