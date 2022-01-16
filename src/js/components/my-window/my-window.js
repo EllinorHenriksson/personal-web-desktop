@@ -28,6 +28,7 @@ template.innerHTML = `
         display: grid;
         grid-template-columns: 10% 80% 10%;
         align-items: center;
+        cursor: move;
     }
 
     ::slotted(img) {
@@ -105,6 +106,15 @@ customElements.define('my-window',
         event.stopPropagation()
         this.dispatchEvent(new window.CustomEvent('closeWindow', { bubbles: true }))
       })
+
+      this.shadowRoot.querySelectorAll('#top-bar slot, #top-bar div, #app-area').forEach(x => x.addEventListener('mousedown', event => {
+        event.stopPropagation()
+        this.dispatchEvent(new window.CustomEvent('mousedownOnWindow', { bubbles: true }))
+      }))
+
+      this.shadowRoot.querySelectorAll('#top-bar slot, #top-bar div').forEach(x => x.addEventListener('mousedown', event => {
+        this.dispatchEvent(new window.CustomEvent('mousedownOnTopBar', { detail: { mousedownEvent: event }, bubbles: true }))
+      }))
     }
 
     /**

@@ -36,6 +36,7 @@ template.innerHTML = `
         height: calc(100vh - 50px);
         margin: 0;
         padding: 0;
+        position: relative;
     }
 
     my-window::part(window) {
@@ -79,6 +80,13 @@ template.innerHTML = `
         border: 2px solid white;
     }
 
+    my-window {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
     .hidden {
         display: none;
     }
@@ -100,6 +108,7 @@ customElements.define('my-pwd',
    * Represents a my-pwd element.
    */
   class extends HTMLElement {
+    #zIndex
     /**
      * Creates an instance of the current type.
      */
@@ -109,27 +118,86 @@ customElements.define('my-pwd',
       // Attach a shadow DOM tree to this element and append the template to the shadow root.
       this.attachShadow({ mode: 'open' }).appendChild(template.content.cloneNode(true))
 
+      this.#zIndex = 0
+
       // Add event listeners.
-      this.shadowRoot.querySelectorAll('button').forEach(x => x.addEventListener('click', event => {
+      this.shadowRoot.querySelectorAll('#dock button').forEach(x => x.addEventListener('click', event => {
         event.stopPropagation()
         this.#handleClick(event)
       }))
 
       this.shadowRoot.querySelector('#desktop').addEventListener('closeWindow', event => this.#handleCloseWindow(event))
+
+      this.shadowRoot.querySelector('#desktop').addEventListener('mousedownOnTopBar', event => this.#handleMousedownOnTopBar(event))
+
+      this.shadowRoot.querySelector('#desktop').addEventListener('mousedownOnWindow', event => this.#handleMousedownOnWindow(event))
     }
 
     #handleClick (event) {
-      if (event.target === this.shadowRoot.querySelector('#one')) {
-        this.shadowRoot.querySelector('#desktop').appendChild(templateMemoryGame.content.cloneNode(true))
-      } else if (event.target === this.shadowRoot.querySelector('#two')) {
-        this.shadowRoot.querySelector('#desktop').appendChild(templateChat.content.cloneNode(true))
-      } else if (event.target === this.shadowRoot.querySelector('#three')) {
-        this.shadowRoot.querySelector('#desktop').appendChild(templateYoutubePlayer.content.cloneNode(true))
+      this.#zIndex += 10
+
+      let template
+      switch (event.target) {
+        case this.shadowRoot.querySelector('#one'):
+          template = templateMemoryGame
+          break
+        case this.shadowRoot.querySelector('#two'):
+          template = templateChat
+          break
+        case this.shadowRoot.querySelector('#three'):
+          template = templateYoutubePlayer
+          break
       }
+
+      const myWindow = template.content.cloneNode(true)
+      this.shadowRoot.querySelector('#desktop').appendChild(myWindow)
+      this.shadowRoot.querySelector('#desktop').lastElementChild.style.zIndex = this.#zIndex
     }
 
     #handleCloseWindow (event) {
       this.shadowRoot.querySelector('#desktop').removeChild(event.target)
+    }
+
+    #handleMousedownOnTopBar (event) {
+      const clientX = event.detail.mousedownEvent.clientX
+      const clientY = event.detail.mousedownEvent.clientY
+
+      const myWindow = event.target
+      const myWindowRect = myWindow.getBoundingClientRect()
+      const desktop = this.shadowRoot.querySelector('#desktop')
+      const desktopRec = desktop.getBoundingClientRect()
+
+      const shiftX = clientX - myWindowRect.left
+      const shiftY = clientY - myWindowRect.top
+
+      myWindow.style.transform = 'none'
+
+      moveMyWindow(clientX, clientY)
+
+      function moveMyWindow (clientX, clientY) {
+        if (clientX - shiftX > 0 && clientX - shiftX < desktopRec.width - myWindowRect.width) {
+          myWindow.style.left = clientX - shiftX + 'px'
+        }
+
+        if (clientY - shiftY > 0 && clientY - shiftY < desktopRec.height - myWindowRect.height) {
+          myWindow.style.top = clientY - shiftY + 'px'
+        }
+      }
+
+      this.shadowRoot.querySelector('#desktop').addEventListener('mousemove', handleMousemove)
+
+      function handleMousemove (event) {
+        moveMyWindow(event.clientX, event.clientY)
+      }
+
+      this.addEventListener('mouseup', () => {
+        this.shadowRoot.querySelector('#desktop').removeEventListener('mousemove', handleMousemove)
+      })
+    }
+
+    #handleMousedownOnWindow (event) {
+      this.#zIndex += 10
+      event.target.style.zIndex = this.#zIndex
     }
   }
 )
