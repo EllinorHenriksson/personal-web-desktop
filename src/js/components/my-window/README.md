@@ -19,6 +19,9 @@ The `data-name` attribute specifies the name of the app, which is shown in the t
 | Event Name      | Fired When                                                 |
 | --------------- | ---------------------------------------------------------- |
 | `closeWindow`   | The user clicks on the cross icon in the top right corner. |
+| `mousedownOnWindow`   | The user clicks anywhere inside the window except on the cross icon. |
+| `mousedownOnTopBar`   | The user clicks on the top bar except on the cross icon. |
+
 
 ## Styling with CSS
 

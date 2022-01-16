@@ -87,6 +87,10 @@ template.innerHTML = `
       transform: translate(-50%, -50%);
     }
 
+    my-window:focus {
+      border: 3px solid blue;
+    }
+
     .hidden {
         display: none;
     }
@@ -108,9 +112,26 @@ customElements.define('my-pwd',
    * Represents a my-pwd element.
    */
   class extends HTMLElement {
+    /**
+     * The zIndex of the topmost my-window custom element.
+     *
+     * @type {number}
+     */
     #zIndex
 
+    /**
+     * A count of how many my-chat instances that have been created.
+     *
+     * @type {number}
+     */
     #chatCount
+
+    /**
+     * The #desktop div element.
+     *
+     * @type {HTMLDivElement}
+     */
+    #desktop
     /**
      * Creates an instance of the current type.
      */
@@ -120,20 +141,22 @@ customElements.define('my-pwd',
       // Attach a shadow DOM tree to this element and append the template to the shadow root.
       this.attachShadow({ mode: 'open' }).appendChild(template.content.cloneNode(true))
 
+      // Set the value of the private properties.
       this.#zIndex = 0
       this.#chatCount = 0
+      this.#desktop = this.shadowRoot.querySelector('#desktop')
 
       // Add event listeners.
-      this.shadowRoot.querySelectorAll('#dock button').forEach(x => x.addEventListener('click', event => {
+      this.shadowRoot.querySelectorAll('button').forEach(x => x.addEventListener('click', event => {
         event.stopPropagation()
         this.#handleClick(event)
       }))
 
-      this.shadowRoot.querySelector('#desktop').addEventListener('closeWindow', event => this.#handleCloseWindow(event))
+      this.#desktop.addEventListener('closeWindow', event => this.#handleCloseWindow(event))
 
-      this.shadowRoot.querySelector('#desktop').addEventListener('mousedownOnTopBar', event => this.#handleMousedownOnTopBar(event))
+      this.#desktop.addEventListener('mousedownOnTopBar', event => this.#handleMousedownOnTopBar(event))
 
-      this.shadowRoot.querySelector('#desktop').addEventListener('mousedownOnWindow', event => this.#handleMousedownOnWindow(event))
+      this.#desktop.addEventListener('mousedownOnWindow', event => this.#handleMousedownOnWindow(event))
     }
 
     #handleClick (event) {
@@ -156,15 +179,16 @@ customElements.define('my-pwd',
       }
 
       const myWindow = template.content.cloneNode(true)
-      this.shadowRoot.querySelector('#desktop').appendChild(myWindow)
-      this.shadowRoot.querySelector('#desktop').lastElementChild.style.zIndex = this.#zIndex
+      this.#desktop.appendChild(myWindow)
+      this.#desktop.lastElementChild.style.zIndex = this.#zIndex
+      this.#desktop.lastElementChild.focus()
 
       if (isMyChat) {
         this.#chatCount += 1
-        this.shadowRoot.querySelector('#desktop').lastElementChild.setAttribute('id', `${this.#chatCount}`)
+        this.#desktop.lastElementChild.setAttribute('id', `${this.#chatCount}`)
         document.querySelector('.emoji-picker__wrapper:last-of-type').setAttribute('id', `${this.#chatCount}`)
 
-        this.#indexEmojiPicker(this.shadowRoot.querySelector('#desktop').lastElementChild)
+        this.#indexEmojiPicker(this.#desktop.lastElementChild)
       }
     }
 
@@ -174,7 +198,7 @@ customElements.define('my-pwd',
     }
 
     #handleCloseWindow (event) {
-      this.shadowRoot.querySelector('#desktop').removeChild(event.target)
+      this.#desktop.removeChild(event.target)
     }
 
     #handleMousedownOnTopBar (event) {
@@ -183,8 +207,7 @@ customElements.define('my-pwd',
 
       const myWindow = event.target
       const myWindowRect = myWindow.getBoundingClientRect()
-      const desktop = this.shadowRoot.querySelector('#desktop')
-      const desktopRec = desktop.getBoundingClientRect()
+      const desktopRec = this.#desktop.getBoundingClientRect()
 
       const shiftX = clientX - myWindowRect.left
       const shiftY = clientY - myWindowRect.top
@@ -203,14 +226,14 @@ customElements.define('my-pwd',
         }
       }
 
-      this.shadowRoot.querySelector('#desktop').addEventListener('mousemove', handleMousemove)
+      this.#desktop.addEventListener('mousemove', handleMousemove)
 
       function handleMousemove (event) {
         moveMyWindow(event.clientX, event.clientY)
       }
 
       this.addEventListener('mouseup', () => {
-        this.shadowRoot.querySelector('#desktop').removeEventListener('mousemove', handleMousemove)
+        this.#desktop.removeEventListener('mousemove', handleMousemove)
       })
     }
 
