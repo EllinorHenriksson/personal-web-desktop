@@ -87,10 +87,6 @@ template.innerHTML = `
       transform: translate(-50%, -50%);
     }
 
-    my-window:focus {
-      border: 3px solid blue;
-    }
-
     .hidden {
         display: none;
     }
