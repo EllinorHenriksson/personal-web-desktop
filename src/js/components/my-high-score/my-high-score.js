@@ -2,7 +2,7 @@
  * The my-high-score web component module.
  *
  * @author Ellinor Henriksson <eh224kr@student.lnu.se>
- * @version 1.1.0
+ * @version 1.0.0
  */
 
 // Define template.

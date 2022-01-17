@@ -27,6 +27,7 @@ template.innerHTML = `
         background-color: #ffffff;
         display: grid;
         grid-template-columns: 10% 80% 10%;
+        grid-template-rows: 100%;
         align-items: center;
         cursor: move;
     }

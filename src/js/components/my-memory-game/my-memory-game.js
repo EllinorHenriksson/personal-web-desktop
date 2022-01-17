@@ -263,7 +263,7 @@ customElements.define('my-memory-game',
     }
 
     /**
-     * Handles the submit.
+     * Handles submit events.
      */
     #handleSubmit () {
       const boardSize = this.shadowRoot.querySelector('input[type=radio]:checked').value
@@ -354,9 +354,9 @@ customElements.define('my-memory-game',
     }
 
     /**
-     * Handles the flipTile event.
+     * Handles the flipTile custom event.
      *
-     * @param {object} event - The dispatched event.
+     * @param {Event} event - The dispatched event.
      */
     #handleFlipTile (event) {
       if (event.detail.dataUp) {

@@ -141,9 +141,11 @@ customElements.define('my-pwd',
       // Attach a shadow DOM tree to this element and append the template to the shadow root.
       this.attachShadow({ mode: 'open' }).appendChild(template.content.cloneNode(true))
 
-      // Set the value of the private properties.
+      // Set the initial value of the private properties #zIndex and #chatCount.
       this.#zIndex = 0
       this.#chatCount = 0
+
+      // Create a reference to the #desktop div element.
       this.#desktop = this.shadowRoot.querySelector('#desktop')
 
       // Add event listeners.
@@ -159,11 +161,15 @@ customElements.define('my-pwd',
       this.#desktop.addEventListener('mousedownOnWindow', event => this.#handleMousedownOnWindow(event))
     }
 
+    /**
+     * Handles click events on the icons in the dock.
+     *
+     * @param {MouseEvent} event - The dispatched event.
+     */
     #handleClick (event) {
       this.#zIndex += 10
 
       let isMyChat
-
       let template
       switch (event.target) {
         case this.shadowRoot.querySelector('#one'):
@@ -192,15 +198,30 @@ customElements.define('my-pwd',
       }
     }
 
+    /**
+     * Sets the z-index for the emoji-picker of the my-chat custom element instance.
+     *
+     * @param {HTMLElement} chatElement - The current my-chat instance.
+     */
     #indexEmojiPicker (chatElement) {
       const id = chatElement.getAttribute('id')
       document.getElementById(id).style.zIndex = this.#zIndex + 1
     }
 
+    /**
+     * Handles the closeWindow custom event.
+     *
+     * @param {CustomEvent} event - The dispatched event.
+     */
     #handleCloseWindow (event) {
       this.#desktop.removeChild(event.target)
     }
 
+    /**
+     * Handles the mousedownOnTopBar custom event.
+     *
+     * @param {CustomEvent} event - The dispatched event.
+     */
     #handleMousedownOnTopBar (event) {
       const clientX = event.detail.mousedownEvent.clientX
       const clientY = event.detail.mousedownEvent.clientY
@@ -216,6 +237,12 @@ customElements.define('my-pwd',
 
       moveMyWindow(clientX, clientY)
 
+      /**
+       * Moves the current my-window custom element accordingly to the position of the mouse.
+       *
+       * @param {number} clientX - The clientX property of the current MouseEvent.
+       * @param {number} clientY - The clientY property of the current MouseEvent.
+       */
       function moveMyWindow (clientX, clientY) {
         if (clientX - shiftX > 0 && clientX - shiftX < desktopRec.width - myWindowRect.width) {
           myWindow.style.left = clientX - shiftX + 'px'
@@ -228,6 +255,11 @@ customElements.define('my-pwd',
 
       this.#desktop.addEventListener('mousemove', handleMousemove)
 
+      /**
+       * Handles the mousemove event.
+       *
+       * @param {MouseEvent} event - The dispatched event.
+       */
       function handleMousemove (event) {
         moveMyWindow(event.clientX, event.clientY)
       }
@@ -237,6 +269,11 @@ customElements.define('my-pwd',
       })
     }
 
+    /**
+     * Handles the mousedownOnWindow custom event.
+     *
+     * @param {CustomEvent} event - The dispatched event.
+     */
     #handleMousedownOnWindow (event) {
       this.#zIndex += 10
       event.target.style.zIndex = this.#zIndex

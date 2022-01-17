@@ -311,7 +311,7 @@ customElements.define('my-chat',
     }
 
     /**
-     * Handles username submit.
+     * Handles the username submit event.
      */
     #handleUsernameSubmit () {
       this.#username = this.shadowRoot.querySelector('input[type="text"]').value
@@ -322,7 +322,7 @@ customElements.define('my-chat',
     }
 
     /**
-     * Handles message submit.
+     * Handles message submit events.
      */
     #handleMessageSubmit () {
       const message = this.shadowRoot.querySelector('#chatbox textarea').value
@@ -362,9 +362,9 @@ customElements.define('my-chat',
     }
 
     /**
-     * Handles message event from web socket.
+     * Handles message events from web socket.
      *
-     * @param {Event} event - The dispatched event.
+     * @param {MessageEvent} event - The dispatched event.
      */
     #handleMessage (event) {
       const data = JSON.parse(event.data)
